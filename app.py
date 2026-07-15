@@ -6,7 +6,10 @@ import operator
 from functools import reduce
 
 
-st.set_page_config("Amazon Best Salers")
+st.set_page_config(
+    page_title="Amazon Best Salers",
+    layout="wide"
+)
 
 df = pd.read_csv("bestsellers with categories.csv")
 
