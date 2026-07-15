@@ -84,7 +84,7 @@ with st.container(border=True):
 
 
 # Analytics
-df["Short_Name"] = df["Name"].str.slice(0, 25)
+df["Short_Name"] = df["Name"].str.slice(0, 35)
 
 st.subheader("Analytics")
 
@@ -111,6 +111,8 @@ with review_col1:
         review_fig1.update_xaxes(tickmode="linear")
         
         st.plotly_chart(review_fig1)
+        
+        st.write("The number of reviews increased steadily from 2009 to 2012, after which it stabilized between 600,000 and 800,000 reviews for the annual best sellers. This pattern may reflect increased customer engagement or a growing number of buyers during that period, although review counts alone cannot confirm the cause.")
           
 with review_col2:
     with st.container(border=True):
@@ -154,6 +156,8 @@ with price_col1:
         fig2.update_xaxes(tickmode="linear")
         
         st.plotly_chart(fig2)
+        
+        st.write("Since 2014, the average price of Amazon best-selling books has been declining. This trend may suggest that more affordable books have become increasingly popular among readers, although additional data would be required to determine the underlying causes.")
         
 with price_col2:
     with st.container(border=True):
@@ -241,4 +245,6 @@ with fic_nonfic_col:
         genre_fig.update_xaxes(tickmode="linear")
         
         st.plotly_chart(genre_fig)
+        
+        st.write("From 2009 to 2019, Amazon's best-selling books were predominantly non-fiction. The only exception occurred in 2014, when fiction titles exceeded non-fiction by 38%. As this differs noticeably from the overall pattern, it may represent a temporary shift in consumer preferences or an isolated variation, although additional data would be needed to determine the reason.")
 
