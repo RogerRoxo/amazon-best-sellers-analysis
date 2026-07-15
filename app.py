@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide"
 )
 
-df = pd.read_csv("data\\bestsellers with categories.csv")
+df = pd.read_csv("data/bestsellers with categories.csv")
 
 
 st.title("Amazon Best Sellers | 2009 - 2019")
