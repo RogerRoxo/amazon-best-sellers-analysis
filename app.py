@@ -1,0 +1,241 @@
+import pandas as pd
+import streamlit as st
+import numpy as np
+import plotly.express as px
+import operator
+from functools import reduce
+
+
+st.set_page_config("Amazon Best Salers")
+
+df = pd.read_csv("bestsellers with categories.csv")
+
+
+st.title("Amazon Best Sellers | 2009 - 2019")
+
+st.subheader("Search")
+with st.container(border=True):
+    
+    st.write("Filters:")
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    # Filter permission
+    with col1:
+        author_filter_bool = st.checkbox("Author", value=False, width=200)
+        
+    with col2:
+        rating_filter_bool = st.checkbox("Rating", value=False)
+
+    with col3:
+        year_filter_bool = st.checkbox("Year", value=False)
+
+    with col4:
+        genre_filter_bool = st.checkbox("Genre", value=False)
+
+
+    # Filters
+    col5, col6, col7, col8 = st.columns(4)
+
+    with col5:
+        author = st.selectbox("Author", sorted(df["Author"].unique()), disabled=not author_filter_bool)
+        
+    with col6:
+        rating = st.selectbox("User Rating", ["0-1", "1-2", "2-3", "3-4", "4-5"], disabled=not rating_filter_bool)
+        
+    with col7:
+        year = st.selectbox("Publication Year", sorted(df["Year"].unique()), disabled=not year_filter_bool)
+
+    with col8:
+        genre = st.selectbox("Genre", df["Genre"].unique(), disabled=not genre_filter_bool)
+
+    # Create Filters conditions
+    author_filter = df["Author"] == author
+    year_filter = df["Year"] == year
+    genre_filter = df["Genre"] == genre
+
+    rating_filter1 = df["User Rating"] >= int(rating[0])
+    rating_filter2 = df["User Rating"] < int(rating[-1])
+    rating_filter3 = rating_filter1 & rating_filter2
+
+
+    # Activation filters list
+    filters_bool = [author_filter_bool, rating_filter_bool, year_filter_bool, genre_filter_bool]
+
+    filters_list = [author_filter, rating_filter3, year_filter, genre_filter]
+
+    active_filter = []
+    for i, active in enumerate(filters_bool):
+        if active == True:
+            active_filter.append(filters_list[i])
+
+    # Have filters on?
+    filter_on = reduce(operator.or_, filters_bool)
+
+
+    if (filter_on):
+        book_filter = reduce(operator.and_, active_filter)
+        st.dataframe(df[book_filter])
+    else:
+        st.dataframe(df)
+
+
+# Analytics
+df["Short_Name"] = df["Name"].str.slice(0, 25)
+
+st.subheader("Analytics")
+
+with st.container():
+    analyctic_col1, analyctic_col2, analyctic_col3 = st.columns([0.7,1,1])
+    
+    with analyctic_col1:
+        st.metric("Books Per Year", 50, border=True)
+
+review_col1, review_col2 = st.columns(2)
+with review_col1:
+    with st.container(border=True):
+        st.subheader("Total Reviews per Year")
+        
+        review_fig1 = px.bar(
+            df[["Year", "Reviews"]].groupby("Year").sum(), 
+            labels={
+                "Year": "Publication Year"
+            },
+            color_discrete_sequence=["#1ba3c2"]
+        )
+        
+        review_fig1.update_layout(yaxis_title=None)
+        review_fig1.update_xaxes(tickmode="linear")
+        
+        st.plotly_chart(review_fig1)
+          
+with review_col2:
+    with st.container(border=True):
+        st.subheader("Top 10 Most Reviewed Books")
+        
+        top10_reviews = df[["Short_Name", "Reviews"]].groupby("Short_Name").sum().nlargest(10, "Reviews")
+        
+        review_fig2 = px.bar(
+            top10_reviews,
+            x="Reviews",
+            color=top10_reviews.index,
+            color_discrete_sequence=px.colors.qualitative.Dark2
+        )
+        
+        review_fig2.update_layout(
+            showlegend=False,
+            xaxis_title=None,
+            yaxis_title=None
+        )
+        
+        st.plotly_chart(review_fig2)
+    
+
+price_col1, price_col2, price_col3 = st.columns([4, 3, 3])
+with price_col1:
+    with st.container(border=True):
+        st.subheader("Mean Prices per Year")
+        
+        fig2 = px.bar(
+            df[["Year", "Price"]].groupby("Year").mean(),
+            labels={
+                "Year": "Publication Year"
+            },
+            color_discrete_sequence=["#389931"]
+        )
+        
+        fig2.update_layout(
+            showlegend=False,
+            yaxis_title=None
+        )
+        fig2.update_xaxes(tickmode="linear")
+        
+        st.plotly_chart(fig2)
+        
+with price_col2:
+    with st.container(border=True):
+        st.subheader("Lowest-Priced Books")
+        
+        df_price1 = df[["Short_Name", "Price"]].groupby("Short_Name").sum().nsmallest(10, "Price")
+        
+        low_price_fig = px.bar(
+            df_price1,
+            x="Price",
+            color=df_price1.index,
+        )
+        
+        low_price_fig.update_layout(
+            showlegend=False,
+            xaxis_title=None,
+            yaxis_title=None
+        )
+        
+        
+        st.plotly_chart(low_price_fig)
+                
+with price_col3:
+    with st.container(border=True):
+        st.subheader("Highest-Priced Books")
+        
+        df_price2 = df[["Short_Name", "Price"]].groupby("Short_Name").sum().nlargest(10, "Price")
+        
+        high_price_fig = px.bar(
+            df_price2,
+            x="Price",
+            color=df_price2.index,
+            color_discrete_sequence=px.colors.qualitative.Safe_r
+        )
+        
+        high_price_fig.update_layout(
+            showlegend=False,
+            xaxis_title=None,
+            yaxis_title=None
+        )
+        
+        
+        st.plotly_chart(high_price_fig)
+    
+
+best_seller_col, fic_nonfic_col =st.columns([2,3])
+with best_seller_col:
+    with st.container(border=True):
+        st.subheader("Top 10 Best-Selling Authors | 2009 - 2019")
+        
+        top10_author = df["Author"].value_counts().nlargest(10)
+        
+        author_fig = px.bar(
+            top10_author,
+            orientation="h",
+            color=top10_author.index
+        )
+        
+        author_fig.update_layout(
+            showlegend=False, 
+            xaxis_title=None,
+            yaxis_title=None
+        )
+        
+        st.plotly_chart(author_fig)
+    
+with fic_nonfic_col:
+    with st.container(border=True):
+        st.subheader("Fiction Vs Non-Fiction")
+        
+        genre_fig = px.bar(
+            df.groupby(["Year", "Genre"]).size().reset_index(name="Count"),
+            x="Year",
+            y="Count",
+            color="Genre",
+            labels={
+                "Year": "Publication Year"
+            }
+        )
+        
+        genre_fig.update_layout(
+            barmode="group",
+            yaxis_title=None
+            )
+        genre_fig.update_xaxes(tickmode="linear")
+        
+        st.plotly_chart(genre_fig)
+
