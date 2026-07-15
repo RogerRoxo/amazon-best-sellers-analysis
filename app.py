@@ -92,7 +92,7 @@ with review_col1:
             color_discrete_sequence=["#1ba3c2"]
         )
         
-        review_fig1.update_layout(yaxis_title=None)
+        review_fig1.update_layout(showlegend=False, yaxis_title=None)
         review_fig1.update_xaxes(tickmode="linear")
         
         st.plotly_chart(review_fig1)
