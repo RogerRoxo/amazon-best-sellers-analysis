@@ -89,9 +89,6 @@ with review_col1:
         
         review_fig1 = px.bar(
             df[["Year", "Reviews"]].groupby("Year").sum(), 
-            labels={
-                "Year": "Publication Year"
-            },
             color_discrete_sequence=["#1ba3c2"]
         )
         
@@ -131,9 +128,6 @@ with price_col1:
         
         fig2 = px.bar(
             df[["Year", "Price"]].groupby("Year").mean(),
-            labels={
-                "Year": "Publication Year"
-            },
             color_discrete_sequence=["#389931"]
         )
         
@@ -220,10 +214,7 @@ with fic_nonfic_col:
             df.groupby(["Year", "Genre"]).size().reset_index(name="Count"),
             x="Year",
             y="Count",
-            color="Genre",
-            labels={
-                "Year": "Publication Year"
-            }
+            color="Genre"
         )
         
         genre_fig.update_layout(
