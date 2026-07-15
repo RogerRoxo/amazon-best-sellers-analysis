@@ -9,6 +9,8 @@ The following tools were used for the analysis:
 
 The dataset is based on the following information: book title, author, user rating, number of reviews, price, year in which the book became a best-seller, and genre (Fiction and Non-Fiction).
 
+You can access the dashboard here: https://amazon-best-sellers-analysis.streamlit.app/
+
 ##  Interactive Search
 
 Since the dataset contains several fields that can be easily filtered, I created a search tab where users can filter table items based on selectable criteria. The filters were divided into "Author", "User Rating", "Publication Year", and "Genre".
