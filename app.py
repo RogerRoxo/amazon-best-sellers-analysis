@@ -26,31 +26,20 @@ with st.container(border=True):
     # Filter permission
     with col1:
         author_filter_bool = st.checkbox("Author", value=False, width=200)
+        author = st.selectbox("Author", sorted(df["Author"].unique()), disabled=not author_filter_bool)
         
     with col2:
         rating_filter_bool = st.checkbox("Rating", value=False)
+        rating = st.selectbox("User Rating", ["0-1", "1-2", "2-3", "3-4", "4-5"], disabled=not rating_filter_bool)
 
     with col3:
         year_filter_bool = st.checkbox("Year", value=False)
+        year = st.selectbox("Publication Year", sorted(df["Year"].unique()), disabled=not year_filter_bool)
 
     with col4:
         genre_filter_bool = st.checkbox("Genre", value=False)
-
-
-    # Filters
-    col5, col6, col7, col8 = st.columns(4)
-
-    with col5:
-        author = st.selectbox("Author", sorted(df["Author"].unique()), disabled=not author_filter_bool)
-        
-    with col6:
-        rating = st.selectbox("User Rating", ["0-1", "1-2", "2-3", "3-4", "4-5"], disabled=not rating_filter_bool)
-        
-    with col7:
-        year = st.selectbox("Publication Year", sorted(df["Year"].unique()), disabled=not year_filter_bool)
-
-    with col8:
         genre = st.selectbox("Genre", df["Genre"].unique(), disabled=not genre_filter_bool)
+   
 
     # Create Filters conditions
     author_filter = df["Author"] == author
